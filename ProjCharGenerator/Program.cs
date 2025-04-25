@@ -14,7 +14,7 @@ namespace generator
         private int totalWeight;
         SortedDictionary<string, int> statistics = new();
 
-        private void Load(string projectDirectory)
+        public void Load(string projectDirectory)
         {
             string inputFilePath = Path.Combine(projectDirectory, "bigrams.txt");
             foreach (var line in File.ReadLines(inputFilePath))
@@ -28,7 +28,7 @@ namespace generator
             }
         }
 
-        private string getSym()
+        public string getSym()
         {
             if (bigrams.Count == 0) return "";
 
@@ -45,7 +45,7 @@ namespace generator
             return bigrams[0].bigram;
         }
 
-        private string GenerateText(int length)
+        public string GenerateText(int length)
         {
             string result = "";
             for (int i = 0; i < length; i++)
@@ -136,7 +136,7 @@ namespace generator
             plot.SavePng(filePath, 2000, 500);
         }
 
-        private int GetWeight(string bigram)
+        public int GetWeight(string bigram)
         {
             return bigrams.Find(x => x.bigram == bigram).weight;
         }
@@ -157,7 +157,7 @@ namespace generator
         private float totalWeight;
         SortedDictionary<string, int> statistics = new();
 
-        private void Load(string projectDirectory)
+        public void Load(string projectDirectory)
         {
             string inputFilePath = Path.Combine(projectDirectory, "words.txt");
             foreach (var line in File.ReadLines(inputFilePath))
@@ -171,7 +171,7 @@ namespace generator
             }
         }
 
-        private string getSym()
+        public string getSym()
         {
             if (words.Count == 0) return "";
 
@@ -188,7 +188,7 @@ namespace generator
             return words[0].word;
         }
 
-        private string GenerateText(int length)
+        public string GenerateText(int length)
         {
             string result = "";
             for (int i = 0; i < length; i++)
@@ -198,7 +198,7 @@ namespace generator
                     statistics[word]++;
                 else
                     statistics.Add(word, 1);
-                result += word;
+                result += word + " ";
             }
             return result;
         }
@@ -279,7 +279,7 @@ namespace generator
             plot.SavePng(filePath, 2000, 500);
         }
 
-        private int GetWeight(string word)
+        public int GetWeight(string word)
         {
             return (int)words.Find(x => x.word == word).weight;
         }

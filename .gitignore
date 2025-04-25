@@ -10,3 +10,5 @@
 /.vs/CharGenerator/FileContentIndex
 /.vs/CharGenerator/v17
 /.vs
+/CharGenerator.Tests/bin/Debug/net8.0
+/CharGenerator.Tests/obj
