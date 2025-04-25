@@ -1,44 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace generator
 {
-    class CharGenerator 
+    public class BigramsGenerator
     {
-        private string syms = "абвгдеёжзийклмнопрстуфхцчшщьыъэюя"; 
-        private char[] data;
-        private int size;
-        private Random random = new Random();
-        public CharGenerator() 
+        private List<(string bigram, int weight)> bigrams = new();
+        private Random random = new();
+        private int totalWeight;
+
+        private void Load(string projectDirectory)
         {
-           size = syms.Length;
-           data = syms.ToCharArray(); 
+            string inputFilePath = Path.Combine(projectDirectory, "bigrams.txt");
+            foreach (var line in File.ReadLines(inputFilePath))
+            {
+                var parts = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 3 && int.TryParse(parts[2], out int weight))
+                {
+                    bigrams.Add((parts[1], weight));
+                    totalWeight += weight;
+                }
+            }
         }
-        public char getSym() 
+
+        private string getSym()
         {
-           return data[random.Next(0, size)]; 
+            if (bigrams.Count == 0) return "";
+
+            int randomValue = random.Next(totalWeight);
+            int sum = 0;
+
+            foreach (var (bigram, weight) in bigrams)
+            {
+                sum += weight;
+                if (randomValue < sum)
+                    return bigram;
+            }
+
+            return bigrams[0].bigram;
+        }
+
+        private string GenerateText(int length)
+        {
+            string result = "";
+            for (int i = 0; i < length; i++)
+            {
+                result += getSym();
+            }
+            return result;
+        }
+
+        private void SaveToFile(string text, string projectDirectory)
+        {
+            string solutionRoot = Directory.GetParent(projectDirectory).FullName;
+            string resultsDir = Path.Combine(solutionRoot, "Results");
+            Directory.CreateDirectory(resultsDir);
+            string filePath = Path.Combine(resultsDir, "gen-1.txt");
+            if (!File.Exists(filePath))
+                File.WriteAllText(filePath, text);
+            else
+                File.WriteAllText(filePath, text);
+        }
+
+        public void BigramsText(string projectDirectory)
+        {
+            Load(projectDirectory);
+            string text = GenerateText(1000);
+            SaveToFile(text, projectDirectory);
         }
     }
+
     class Program
     {
         static void Main(string[] args)
         {
-            CharGenerator gen = new CharGenerator();
-            SortedDictionary<char, int> stat = new SortedDictionary<char, int>();
-            for(int i = 0; i < 1000; i++) 
-            {
-               char ch = gen.getSym(); 
-               if (stat.ContainsKey(ch))
-                  stat[ch]++;
-               else
-                  stat.Add(ch, 1); Console.Write(ch);
-            }
-            Console.Write('\n');
-            foreach (KeyValuePair<char, int> entry in stat) 
-            {
-                 Console.WriteLine("{0} - {1}",entry.Key,entry.Value/1000.0); 
-            }
-            
+            string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+
+            var generator = new BigramsGenerator();
+            generator.BigramsText(projectDirectory);
+
         }
     }
 }

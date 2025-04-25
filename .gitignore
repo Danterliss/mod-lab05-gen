@@ -1,0 +1,12 @@
+﻿################################################################################
+# Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/CharGenerator/DesignTimeBuild
+/ProjCharGenerator/bin/Debug/netcoreapp7.0
+/ProjCharGenerator/obj
+/.vs/mod-lab05-gen/v17
+/.vs/ProjectEvaluation
+/.vs/CharGenerator/FileContentIndex
+/.vs/CharGenerator/v17
+/.vs
