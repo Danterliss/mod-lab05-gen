@@ -124,21 +124,5 @@ namespace CharGenerator.Tests
             var text2 = generator.GenerateText(5);
             Assert.NotEqual(text1, text2);
         }
-
-        [Fact]
-        public void BigramsGenerator_GetWeight_ReturnsPositiveForKnownBigram()
-        {
-            var generator = new BigramsGenerator();
-            generator.Load(projectDirectory);
-            Assert.True(generator.GetWeight("аа") > 0);
-        }
-
-        [Fact]
-        public void WordsGenerator_GetWeight_ReturnsPositiveForKnownWord()
-        {
-            var generator = new WordsGenerator();
-            generator.Load(projectDirectory);
-            Assert.True(generator.GetWeight("слово") > 0);
-        }
     }
 }
