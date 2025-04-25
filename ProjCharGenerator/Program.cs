@@ -57,13 +57,74 @@ namespace generator
             string resultsDir = Path.Combine(solutionRoot, "Results");
             Directory.CreateDirectory(resultsDir);
             string filePath = Path.Combine(resultsDir, "gen-1.txt");
-            if (!File.Exists(filePath))
-                File.WriteAllText(filePath, text);
-            else
-                File.WriteAllText(filePath, text);
+            File.WriteAllText(filePath, text);
         }
 
         public void BigramsText(string projectDirectory)
+        {
+            Load(projectDirectory);
+            string text = GenerateText(1000);
+            SaveToFile(text, projectDirectory);
+        }
+    }
+
+    public class WordsGenerator
+    {
+        private List<(string word, float weight)> words = new();
+        private Random random = new();
+        private float totalWeight;
+
+        private void Load(string projectDirectory)
+        {
+            string inputFilePath = Path.Combine(projectDirectory, "words.txt");
+            foreach (var line in File.ReadLines(inputFilePath))
+            {
+                var parts = line.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 3 && float.TryParse(parts[2], out float weight))
+                {
+                    words.Add((parts[1], weight));
+                    totalWeight += weight;
+                }
+            }
+        }
+
+        private string getSym()
+        {
+            if (words.Count == 0) return "";
+
+            int randomValue = random.Next((int)totalWeight);
+            float sum = 0;
+
+            foreach (var (words, weight) in words)
+            {
+                sum += weight;
+                if (randomValue < sum)
+                    return words;
+            }
+
+            return words[0].word;
+        }
+
+        private string GenerateText(int length)
+        {
+            string result = "";
+            for (int i = 0; i < length; i++)
+            {
+                result += getSym();
+            }
+            return result;
+        }
+
+        private void SaveToFile(string text, string projectDirectory)
+        {
+            string solutionRoot = Directory.GetParent(projectDirectory).FullName;
+            string resultsDir = Path.Combine(solutionRoot, "Results");
+            Directory.CreateDirectory(resultsDir);
+            string filePath = Path.Combine(resultsDir, "gen-2.txt");
+            File.WriteAllText(filePath, text);
+        }
+
+        public void WordsText(string projectDirectory)
         {
             Load(projectDirectory);
             string text = GenerateText(1000);
@@ -77,9 +138,11 @@ namespace generator
         {
             string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
 
-            var generator = new BigramsGenerator();
-            generator.BigramsText(projectDirectory);
+            var generatorB = new BigramsGenerator();
+            generatorB.BigramsText(projectDirectory);
 
+            var generatorW = new WordsGenerator();
+            generatorW.WordsText(projectDirectory);
         }
     }
 }
